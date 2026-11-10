@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Unit 4 Practice: Continuity and the Derivative</title>
+<title>Unit 4 Practice</title>
 <meta name="description" content="Practice continuity and derivatives from the definition with feedback on each line of your work.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2802,7 +2802,7 @@ var selfcheck = (function () {
    ==================================================================================== */
 
 /* ---------------- links ---------------- */
-var PAUL_C = 'https://tutorial.math.lamar.edu/Classes/CalcI/', PAUL_P = 'https://tutorial.math.lamar.edu/Problems/CalcI/';
+var PAUL_C = 'https://tutorial.math.lamar.edu/Classes/CalcI/';
 function paulEx(page, title, ex) { return [PAUL_C + page + '.aspx', 'Paul’s Online Math Notes: ' + title + (ex ? ', ' + ex : '')]; }
 var T_CONT = paulEx('Continuity', 'Continuity', 'Examples 1 and 2');
 var T_IVT = paulEx('Continuity', 'Continuity', 'Examples 4 and 5');
@@ -2829,6 +2829,12 @@ var FORM = {
       }
       return count > n ? msg : null;
     };
+  },
+  /* y = mx + b: no parentheses, y alone on the left (or no left side), at most two terms on the right (More Practice) */
+  slopeIntercept: function (raw) {
+    var s = String(raw).replace(/\s+/g, '').replace(/[−–]/g, '-'), i = s.lastIndexOf('='), lhs = i >= 0 ? s.slice(0, i) : 'y';
+    var msg = 'That is the right line. Multiply out and combine the constants so that it reads `y = mx + b`.';
+    return /[()]/.test(s) || lhs.toLowerCase() !== 'y' || FORM.terms(2, msg)(s.slice(i + 1)) ? msg : null;
   }
 };
 
@@ -2837,12 +2843,14 @@ var SECTIONS_P = [
   { id: 'sec-cont', title: 'Continuity', nav: 'Continuity', lede: 'These go with Paul’s [Continuity](' + T_CONT[0] + '), Examples 1 and 2. A function is continuous at `x = a` when `f(a)` is defined, `lim{x→a} f(x)` exists, and the two are equal.' },
   { id: 'sec-ivt', title: 'The Intermediate Value Theorem', nav: 'IVT', lede: 'This goes with Paul’s [Continuity](' + T_IVT[0] + '), Examples 4 and 5.' },
   { id: 'sec-def', title: 'The Definition of the Derivative', nav: 'Definition', lede: 'These go with Paul’s [The Definition of the Derivative](' + T_DEF1[0] + '), Examples 1 to 3: substitute, simplify the top, cancel `h`, then let `h → 0`.' },
-  { id: 'sec-interp', title: 'Interpreting the Derivative', nav: 'Interpreting', lede: 'These go with Paul’s [Interpretation of the Derivative](' + T_RATE[0] + '), Examples 1 and 4.' }
+  { id: 'sec-interp', title: 'Interpreting the Derivative', nav: 'Interpreting', lede: 'These go with Paul’s [Interpretation of the Derivative](' + T_RATE[0] + '), Examples 1 and 4.' },
+  { id: 'sec-more', title: 'More Practice (Only If You Want It)', nav: 'More Practice', lede: 'Nothing in this section is required. If a kind of problem above took you more than one try, the problem of the same kind here gives you another go: Problem 9 for continuity at a cutoff, Problems 10 to 13 for the definition of the derivative, and Problems 14 to 17 for what a derivative tells you. The Unit 4 Problem Set comes next either way.' }
 ];
 
 /* ---------------- the problems ---------------- */
 function defF(x) { return 3 * x * x - 5 * x + 4; }
 function tankV(t) { return 40 + 6 * t - t * t; }
+function m9F(x) { return (-7 * x * x * x + 39 * x * x - 30 * x + 79) / 27; }   /* f(1) = 3, f′(1) = 1, f(4) = 5, f′(4) = −2 */
 function shapeF(x) { return x <= 3 ? x * x * x / 3 + x * x / 2 - 2 * x : 7.5 - 2 * (x - 3); }
 var DEF_LIM = 'Plugging `h = 0` into `F{f(x + h) − f(x)}{h}` gives `F{0}{0}`. What do you do first?';
 var PROBLEMS = [
@@ -3094,7 +3102,263 @@ var PROBLEMS = [
     graph: { x: [-4, 5], y: [-4, 11], ticks: { x: 1, y: 2 }, labels: { x: 'x' }, fns: [{ f: function (x) { return (x + 2) * (x - 1); }, domain: [-4, 3] }, { f: function () { return -2; }, domain: [3, 5] }],
       dots: [{ x: 3, y: 10, open: true }, { x: 3, y: -2, open: true }], texts: [{ x: -3.2, y: 9, text: 'y = f′(x)' }],
       aria: 'The graph of f′: a parabola crossing zero at x = −2 and x = 1, rising to an open circle at (3, 10), then a horizontal line at y = −2 from an open circle at (3, −2) onward.' },
-    after: 'The graph of `f′` crosses zero at `x = −2` and `x = 1`, and breaks at the corner, `x = 3`.' }
+    after: 'The graph of `f′` crosses zero at `x = −2` and `x = 1`, and breaks at the corner, `x = 3`.' },
+
+  /* ================= More Practice (optional), added 2026-11-10 by the clarity rebuild =================
+     From the practice twins removed from Unit 4 Worked Examples (plan/clarity-rebuild/twins/unit-04.md: 4.1, 4.4, 4.5,
+     4.6, 4.7) and the value-add Paul problems (plan/clarity-rebuild/value-add.md, Unit 4: The Definition of the
+     Derivative 6 and 9, Interpretation of the Derivative 1 and 3). Every key and wrong answer: SPEC.md, "More Practice". */
+
+  /* 9. (twin 4.1) a constant that makes a piecewise function continuous */
+  { id: 'm1', sec: 'sec-more', task: 'Find the value of `c` that makes `g` continuous at `x = 3`.', board: ['g(x) = cx + 1, "if" x ≤ 3', 'g(x) = x^2 + c, "if" x > 3'], v: 'c', teach: ['#ex-p1', 'See Problem 1: the three checks at a cutoff'],
+    steps: [
+      { lead: 'The value `g(3)` and the left-hand limit both use `cx + 1`, because `x = 3` satisfies `x ≤ 3`. Write `g(3)` in terms of `c`.', ask: 'g(3) =', ans: '3c + 1',
+        wrongs: [['9 + c', 'That comes from `x^2 + c`, the formula for `x > 3`. The input 3 satisfies `x ≤ 3`, so use `cx + 1`.'],
+          ['c + 1', 'Put `x = 3` into `cx + 1`: `c · 3 + 1 = 3c + 1`.']],
+        hints: ['Replace `x` with 3 in `cx + 1`. The letter `c` stays.'] },
+      { lead: 'Now the right-hand limit, in terms of `c`.', ask: 'lim{x→3^+} g(x) =', ans: '9 + c',
+        wrongs: [['3c + 1', 'From the right, `x > 3`, so use `x^2 + c`.'],
+          ['6 + c', '`3^2 = 3 · 3 = 9`, not `2 · 3`.']],
+        hints: ['From the right, use `x^2 + c` and put in `x = 3`.'] },
+      { lead: 'For `g` to be continuous at 3, what must be true?', ok: 0, pick: [
+        ['`3c + 1 = 9 + c`: the two sides meet at the same height', 'Then the limit exists and equals `g(3)`, so all three checks pass.'],
+        ['`3c + 1 = 0`', 'Continuity does not ask for a height of 0. It asks the left side and the right side to reach the same height.'],
+        ['`9 + c = 3`', '3 is the input, not a height. Set the two heights equal to each other.']] },
+      { lead: 'Solve `3c + 1 = 9 + c`.', ask: 'c =', num: true, ans: '4',
+        wrongs: [['5', 'Moving the 1 to the right side subtracts it: `2c = 9 − 1 = 8`.'],
+          ['2', 'Moving `c` to the left side subtracts it: `3c − c = 2c`, so `2c = 8`.'],
+          ['8', 'That is `2c`. Divide both sides of `2c = 8` by 2.']],
+        hints: ['Subtract `c` and subtract 1 from both sides: `2c = 8`.'] }],
+    graph: { x: [0, 5], y: [0, 30], ticks: { x: 1, y: 5 }, fns: [{ f: function (x) { return 4 * x + 1; }, domain: [0, 3] }, { f: function (x) { return x * x + 4; }, domain: [3, 5] }],
+      dots: [{ x: 3, y: 13, label: '(3, 13)', at: 'nw' }],
+      aria: 'The graph of g with c = 4: the line 4x + 1 rising to (3, 13), then the curve x squared + 4 continuing up from the same point with no break.' },
+    after: 'With `c = 4`, both pieces reach height 13 at `x = 3`, so the graph has no break there.' },
+
+  /* 10. (twin 4.4) the definition with a polynomial, then the tangent line as y = mx + b */
+  { id: 'm2', sec: 'sec-more', task: 'Use the definition to find `g′(x)`. Then write the tangent line at `x = 3` in the form `y = mx + b`.', board: ['g(x) = 2x^2 − 8x + 1', 'g′(x) = lim{h→0} F{g(x + h) − g(x)}{h}'], teach: T_DEF1,
+    steps: [
+      { lead: 'Write `g(x + h) = 2(x + h)^2 − 8(x + h) + 1` and multiply out.', ask: 'g(x + h) =', xh: true, ans: '2x^2 + 4xh + 2h^2 - 8x - 8h + 1', form: FORM.expanded,
+        wrongs: [['2x^2 + 2h^2 - 8x - 8h + 1', '`(x + h)^2 = x^2 + 2xh + h^2`, so `2(x + h)^2` has the middle term `4xh`.', ['#ex-p4', 'See Problem 4, the same step']],
+          ['2x^2 + 4xh + 2h^2 - 8x + 8h + 1', '`−8 · h = −8h`. The minus sign reaches both terms of `x + h`.'],
+          ['2x^2 + 2xh + h^2 - 8x - 8h + 1', 'The 2 multiplies all of `(x + h)^2`: `2(x^2 + 2xh + h^2) = 2x^2 + 4xh + 2h^2`.']],
+        hints: ['First `(x + h)^2 = x^2 + 2xh + h^2`. Multiply it by 2, then distribute the `−8`.'] },
+      { lead: 'Subtract `g(x)` and combine like terms.', ask: 'g(x + h) − g(x) =', xh: true, ans: '4xh + 2h^2 - 8h',
+        form: FORM.terms(3, 'That is equal, but it still has like terms to combine. The `2x^2`, the `−8x` and the 1 each cancel.'),
+        wrongs: [['4x^2 + 4xh + 2h^2 - 16x - 8h + 2', 'Subtract `g(x)`; that added it. Put `g(x)` in parentheses: `−(2x^2 − 8x + 1) = −2x^2 + 8x − 1`.'],
+          ['4xh + 2h^2 - 16x - 8h', 'The minus sign reaches every term of `g(x)`: `−(−8x) = +8x`, so the `−8x` terms cancel.'],
+          ['4xh + 2h^2 - 8h + 2', 'The minus sign reaches every term of `g(x)`: `−(+1) = −1`, so the constants cancel.']],
+        hints: ['Write `−(2x^2 − 8x + 1)` and change the sign of each term inside. Then every term without an `h` cancels.'] },
+      { lead: 'Divide by `h`: factor `h` out of the top and cancel it.', ask: 'F{4xh + 2h^2 − 8h}{h} =', xh: true, ans: '4x + 2h - 8', at: 0,
+        wrongs: [['4x - 8', 'That is the limit, which comes on the next line. On this line, divide by `h` and keep the `2h`.'],
+          ['4x + 2h^2 - 8', 'Divide every term by `h`: `F{2h^2}{h} = 2h`.'],
+          ['4xh + 2h - 8', 'Divide every term by `h`, including `4xh`, which becomes `4x`.']],
+        hints: ['`4xh + 2h^2 − 8h = h(4x + 2h − 8)`.'] },
+      { lead: 'Let `h → 0`.', ask: 'g′(x) =', xh: true, ans: '4x - 8',
+        wrongs: [[['4x + 2h - 8', '4x+2h-8'], 'Now take the limit: as `h → 0`, the term `2h` goes to 0.'],
+          ['4x - 6', 'As `h → 0`, `2h` becomes 0, not 2.']],
+        hints: ['Replace `h` with 0.'] },
+      { lead: 'The slope of the tangent line at `x = 3` is `g′(3)`.', ask: 'g′(3) =', num: true, ans: '4',
+        wrongs: [['-5', 'That is `g(3)`, the height. The slope is `g′(3) = 4 · 3 − 8`.'],
+          ['20', '`4 · 3 − 8 = 4`. Subtract the 8.']],
+        hints: ['Put 3 into `g′(x) = 4x − 8`.'] },
+      { lead: 'The tangent line passes through `(3, g(3))`.', ask: 'g(3) =', num: true, ans: '-5',
+        wrongs: [['4', 'That is `g′(3)`, the slope. Put 3 into `g(x) = 2x^2 − 8x + 1`.'],
+          ['13', '`2 · 3^2 = 2 · 9 = 18`: square first, then multiply. So `g(3) = 18 − 24 + 1`.'],
+          ['43', '`−8 · 3 = −24`. So `g(3) = 18 − 24 + 1`.']],
+        hints: ['`2 · 3^2 − 8 · 3 + 1`.'] },
+      { lead: 'Write the tangent line, `y = g(a) + g′(a)(x − a)`, then multiply out so it reads `y = mx + b`.', ask: 'y =', eq: 'y', ans: '4x - 17', form: FORM.slopeIntercept,
+        wrongs: [['4x - 8', 'That is `g′(x)`, the slope formula, or `4(x − 3)` multiplied out as `4x − 3`. Start from `y = −5 + 4(x − 3)` and multiply 4 by both terms of `x − 3`.'],
+          ['4x + 7', 'With `a = 3`, the factor is `x − a = x − 3`, so `4(x − 3) = 4x − 12`.'],
+          ['-5x + 19', 'The height `g(3) = −5` comes first and the slope `g′(3) = 4` multiplies `x − 3`.']],
+        hints: ['Start from `y = −5 + 4(x − 3)`. Multiply out `4(x − 3)`, then combine the constants.'] }],
+    graph: { x: [-1, 5.5], y: [-8, 12], ticks: { x: 1, y: 4 }, fns: [{ f: function (x) { return 2 * x * x - 8 * x + 1; } }], tangent: { f: 0, at: 3, slope: 4, half: 1.2 }, dots: [{ x: 3, y: -5, label: '(3, −5)', at: 'se' }],
+      aria: 'The graph of g(x) = 2x squared − 8x + 1, a parabola opening up with its lowest point at (2, −7), and its tangent line of slope 4 touching it at (3, −5).' },
+    after: 'The tangent line at `(3, −5)` is `y = 4x − 17`.' },
+
+  /* 11. (twin 4.5) the definition with a fraction */
+  { id: 'm3', sec: 'sec-more', task: 'Use the definition to find `g′(x)`. Then evaluate `g′(1)`.', board: 'g(x) = F{1}{2x + 1}', teach: T_DEF2,
+    steps: [
+      { lead: 'Write `g(x + h)`.', ask: 'g(x + h) =', xh: true, ans: '1/(2x + 2h + 1)',
+        wrongs: [['1/(2x + 1) + h', 'That is `g(x) + h`. Replace the `x` in the formula with `x + h`.'],
+          ['1/(2x + h + 1)', 'The 2 multiplies all of `x + h`: `2(x + h) = 2x + 2h`.']],
+        hints: ['Wherever `g` has an `x`, write `x + h`, so `2x` becomes `2(x + h)`.'] },
+      { lead: 'To subtract `F{1}{2x + 2h + 1} − F{1}{2x + 1}`, what common denominator do you use?', ok: 0, pick: [
+        ['`(2x + 2h + 1)(2x + 1)`', 'Keep it factored, so that `h` can cancel later.'],
+        ['`(2x + 2h + 1) + (2x + 1)`', 'A common denominator is a product of the denominators, not their sum.'],
+        ['`h`', '`h` is the bottom of the whole quotient. First write the top as one fraction.']] },
+      { show: ['g(x + h) − g(x)', '= F{(2x + 1) − (2x + 2h + 1)}{(2x + 2h + 1)(2x + 1)}'] },
+      { lead: 'Simplify the top.', ask: '(2x + 1) − (2x + 2h + 1) =', xh: true, ans: '-2h',
+        form: function (raw) { return FORM.expanded(raw) || FORM.terms(1, 'That is equal, but combine like terms: the `2x` terms cancel, and so do the 1s.')(raw); },
+        wrongs: [['2h', 'Order matters: the top is `(2x + 1) − (2x + 2h + 1)`, which is negative.'],
+          ['-2h + 2', 'The minus sign reaches every term: `−(2x + 2h + 1) = −2x − 2h − 1`, so the 1s cancel.'],
+          ['4x + 2h + 2', 'Subtract the second bottom; that added it. Change the sign of each of its terms.']],
+        hints: ['Distribute the minus sign: `2x + 1 − 2x − 2h − 1`. Then combine.'] },
+      { lead: 'Divide by `h` and cancel. Keep the bottom factored.', ask: 'F{1}{h} · F{−2h}{(2x + 2h + 1)(2x + 1)} =', xh: true, ans: '-2/((2x + 2h + 1)(2x + 1))', at: 0,
+        wrongs: [['2/((2x + 2h + 1)(2x + 1))', 'Keep the minus sign from `−2h`.'],
+          ['-2/(2x + 1)^2', 'That is the limit, which comes on the next line. On this line, cancel `h` and keep the `h` in `2x + 2h + 1`.']],
+        hints: ['The `h` in `−2h` cancels the `h` from `F{1}{h}`.'] },
+      { lead: 'Let `h → 0`.', ask: 'g′(x) =', xh: true, ans: '-2/(2x + 1)^2',
+        wrongs: [['2/(2x + 1)^2', 'Keep the minus sign.'],
+          ['-1/(2x + 1)^2', 'The 2 from `−2h` stays on top after `h` cancels.'],
+          ['-2/(4x^2 + 1)', '`(2x + 1)^2 = 4x^2 + 4x + 1`, which is not `4x^2 + 1`. Leave it as `(2x + 1)^2`.'],
+          [['-2/((2x+2h+1)(2x+1))', '-2/((2x + 2h + 1)(2x + 1))'], 'Now take the limit: replace `h` with 0.']],
+        hints: ['Replace `h` with 0 in `F{−2}{(2x + 2h + 1)(2x + 1)}`. The two factors on the bottom are then the same.'] },
+      { lead: 'Evaluate the derivative at `x = 1`.', ask: 'g′(1) =', num: true, ans: '-2/9',
+        wrongs: [['-2/3', 'Square the whole bottom: `(2 · 1 + 1)^2 = 3^2 = 9`.'],
+          ['1/3', 'That is `g(1)`, the height. Put 1 into `g′(x) = −F{2}{(2x + 1)^2}`.'],
+          ['2/9', 'Keep the minus sign: `g` is falling at `x = 1`.']],
+        hints: ['`2 · 1 + 1 = 3`, and `3^2 = 9`.'] }] },
+
+  /* 12. (Paul, The Definition of the Derivative, Problem 9, in x) a fraction with x on top */
+  { id: 'm4', sec: 'sec-more', task: 'Use the definition to find `f′(x)`. Here the top of the fraction has an `x` too.', board: 'f(x) = F{x + 1}{x + 4}', teach: T_DEF2,
+    steps: [
+      { lead: 'Write `f(x + h)`.', ask: 'f(x + h) =', xh: true, ans: '(x + h + 1)/(x + h + 4)',
+        wrongs: [['(x + 1)/(x + 4) + h', 'That is `f(x) + h`. Replace every `x` in the formula, top and bottom, with `x + h`.'],
+          ['(x + h + 1)/(x + 4)', 'The bottom has an `x` too. Replace it with `x + h` as well.']],
+        hints: ['Wherever `f` has an `x`, on top and on the bottom, write `x + h`.'] },
+      { lead: 'How do you write `F{x + h + 1}{x + h + 4} − F{x + 1}{x + 4}` as one fraction?', ok: 0, pick: [
+        ['Use the common denominator `(x + h + 4)(x + 4)`: multiply each top by the other bottom, then subtract', 'That is how any two fractions subtract: `F{a}{b} − F{c}{d} = F{ad − bc}{bd}`.'],
+        ['Subtract the tops and subtract the bottoms', 'Fractions do not subtract top from top and bottom from bottom. Use a common denominator: `F{a}{b} − F{c}{d} = F{ad − bc}{bd}`.'],
+        ['Cancel the `x` on top with the `x` on the bottom', 'Here `x` is a term, not a factor, and only factors cancel. Use a common denominator first.']] },
+      { show: ['f(x + h) − f(x)', '= F{(x + h + 1)(x + 4) − (x + 1)(x + h + 4)}{(x + h + 4)(x + 4)}'] },
+      { lead: 'Multiply out the first product on the top.', ask: '(x + h + 1)(x + 4) =', xh: true, ans: 'x^2 + xh + 5x + 4h + 4', form: FORM.expanded,
+        wrongs: [['x^2 + xh + 5x + h + 4', 'The 4 multiplies every term of `x + h + 1`, so the `h` term is `4h`.'],
+          ['x^2 + 4x + 4h + 4', 'Multiply every term of the first factor by `x` as well: `x · h = xh` and `x · 1 = x`.']],
+        hints: ['Multiply `x + h + 1` by `x`, then by 4, and add: `x^2 + xh + x + 4x + 4h + 4`. Then combine like terms.'] },
+      { lead: 'Multiply out the second product.', ask: '(x + 1)(x + h + 4) =', xh: true, ans: 'x^2 + xh + 5x + h + 4', form: FORM.expanded,
+        wrongs: [['x^2 + xh + 5x + 4h + 4', 'That is the first product. Here the 1 multiplies `h`, so the `h` term is `h`, not `4h`.'],
+          ['x^2 + xh + 4x + h + 4', 'The 1 multiplies the `x` in `x + h + 4` too, which adds one more `x`: `4x + x = 5x`.']],
+        hints: ['Multiply `x + h + 4` by `x`, then by 1, and add: `x^2 + xh + 4x + x + h + 4`.'] },
+      { lead: 'Subtract the second product from the first.', ask: '"top" =', xh: true, ans: '3h',
+        form: FORM.terms(1, 'That is equal, but combine like terms: everything except the `h` terms cancels.'),
+        wrongs: [['5h', 'Subtract the `h` terms: `4h − h = 3h`.'],
+          ['-3h', 'Order matters: the first product minus the second is `4h − h`, which is positive.'],
+          ['2x^2 + 2xh + 10x + 5h + 8', 'Subtract the second product; that added it.']],
+        hints: ['The `x^2`, `xh`, `5x` and 4 appear in both products, so they cancel. Only `4h − h` is left.'] },
+      { lead: 'Divide by `h` and cancel. Keep the bottom factored.', ask: 'F{1}{h} · F{3h}{(x + h + 4)(x + 4)} =', xh: true, ans: '3/((x + h + 4)(x + 4))', at: 0,
+        wrongs: [['3/(x + 4)^2', 'That is the limit, which comes on the next line. On this line, cancel `h` and keep the `h` in `x + h + 4`.']],
+        hints: ['The `h` in `3h` cancels the `h` from `F{1}{h}`.'] },
+      { lead: 'Let `h → 0`.', ask: 'f′(x) =', xh: true, ans: '3/(x + 4)^2',
+        wrongs: [['3/(x^2 + 16)', '`(x + 4)^2 = x^2 + 8x + 16`, which is not `x^2 + 16`. Leave it as `(x + 4)^2`.'],
+          ['1/(x + 4)^2', 'The 3 from `3h` stays on top after `h` cancels.'],
+          [['3/((x+h+4)(x+4))', '3/((x + h + 4)(x + 4))'], 'Now take the limit: replace `h` with 0.']],
+        hints: ['Replace `h` with 0. The two factors on the bottom are then the same.'] }] },
+
+  /* 13. (Paul, The Definition of the Derivative, Problem 6) a cube */
+  { id: 'm5', sec: 'sec-more', task: 'Use the definition to find `f′(x)`. This one needs `(x + h)^3`.', board: ['f(x) = 2x^3 − 1', 'f′(x) = lim{h→0} F{f(x + h) − f(x)}{h}'], teach: T_DEF1,
+    steps: [
+      { lead: 'Multiply out `(x + h)^3`. It is `(x + h)` times `(x + h)^2 = x^2 + 2xh + h^2`.', ask: '(x + h)^3 =', xh: true, ans: 'x^3 + 3x^2h + 3xh^2 + h^3', form: FORM.expanded,
+        wrongs: [['x^3 + h^3', 'A power does not split over a sum: `(x + h)^3` has middle terms. Multiply `(x + h)(x^2 + 2xh + h^2)` term by term.'],
+          ['x^3 + 2x^2h + 2xh^2 + h^3', 'Multiply every term: `x(x^2 + 2xh + h^2) + h(x^2 + 2xh + h^2)` gives `2x^2h + x^2h = 3x^2h` and `xh^2 + 2xh^2 = 3xh^2`.']],
+        hints: ['Multiply `x^2 + 2xh + h^2` by `x`, then by `h`, and add. Then combine the `x^2h` terms and the `xh^2` terms.'] },
+      { lead: 'Write `f(x + h) = 2(x + h)^3 − 1` and multiply out.', ask: 'f(x + h) =', xh: true, ans: '2x^3 + 6x^2h + 6xh^2 + 2h^3 - 1', form: FORM.expanded,
+        wrongs: [['2x^3 + 3x^2h + 3xh^2 + h^3 - 1', 'The 2 multiplies every term of `(x + h)^3`, not only `x^3`.'],
+          ['2x^3 + 6x^2h + 6xh^2 + 2h^3 - 2', 'The 2 multiplies `(x + h)^3` only. The `−1` stays `−1`.']],
+        hints: ['Multiply each term of `x^3 + 3x^2h + 3xh^2 + h^3` by 2, then write the `−1`.'] },
+      { lead: 'Subtract `f(x)` and combine like terms.', ask: 'f(x + h) − f(x) =', xh: true, ans: '6x^2h + 6xh^2 + 2h^3',
+        form: FORM.terms(3, 'That is equal, but it still has like terms to combine. The `2x^3` and the `−1` each cancel.'),
+        wrongs: [['4x^3 + 6x^2h + 6xh^2 + 2h^3 - 2', 'Subtract `f(x)`; that added it. Put `f(x)` in parentheses: `−(2x^3 − 1) = −2x^3 + 1`.'],
+          ['6x^2h + 6xh^2 + 2h^3 - 2', 'The minus sign reaches both terms of `f(x)`: `−(−1) = +1`, so the constants cancel.']],
+        hints: ['Write `−(2x^3 − 1)` and change the sign of each term inside. Then every term without an `h` cancels.'] },
+      { lead: 'Divide by `h`: factor `h` out of the top and cancel it.', ask: 'F{6x^2h + 6xh^2 + 2h^3}{h} =', xh: true, ans: '6x^2 + 6xh + 2h^2', at: 0,
+        wrongs: [['6x^2', 'That is the limit, which comes on the next line. On this line, divide by `h` and keep the terms with `h`.'],
+          ['6x^2 + 6xh^2 + 2h^3', 'Divide every term by `h`: `F{6xh^2}{h} = 6xh` and `F{2h^3}{h} = 2h^2`.']],
+        hints: ['`6x^2h + 6xh^2 + 2h^3 = h(6x^2 + 6xh + 2h^2)`.'] },
+      { lead: 'Let `h → 0`.', ask: 'f′(x) =', xh: true, ans: '6x^2',
+        wrongs: [[['6x^2 + 6xh + 2h^2', '6x^2+6xh+2h^2'], 'Now take the limit: as `h → 0`, the terms `6xh` and `2h^2` go to 0.'],
+          ['6x^2 + 6x + 2', 'As `h → 0`, `6xh` and `2h^2` become 0, not `6x` and 2.']],
+        hints: ['Replace `h` with 0.'] }] },
+
+  /* 14. (twin 4.6) position, velocity and direction */
+  { id: 'm6', sec: 'sec-more', task: 'An object’s position is `s(t) = 15 + 8t − t^2` meters, `t` seconds after it starts.', board: 's(t) = 15 + 8t − t^2', v: 't', teach: T_RATE,
+    steps: [
+      { lead: 'Use the definition to find the velocity, `v(t) = s′(t)`. Work it on paper and type the result.', ask: 'v(t) =', ans: '8 - 2t', units: 'm/s', unitAlts: ['meters per second'],
+        wrongs: [['23 - 2t', 'The constant 15 cancels in `s(t + h) − s(t)`, so it leaves no trace in the derivative.'],
+          ['8 - t', '`(t + h)^2 − t^2 = 2th + h^2`, so the `t^2` term gives `−2t`, not `−t`.'],
+          ['8t - 2t', 'The term `8t` changes by `8h`, and `F{8h}{h} = 8`. So it gives 8, not `8t`.']],
+        hints: ['`s(t + h) − s(t) = 8h − 2th − h^2`. Divide by `h`, then let `h → 0`.'] },
+      { lead: 'The object stops when its velocity is 0. When does it stop?', ask: 't =', num: true, ans: '4', units: 'seconds',
+        wrongs: [['31', 'That is `s(4)`, where it is. The question asks when: solve `v(t) = 8 − 2t = 0`.'],
+          ['8', 'Solve `8 − 2t = 0`: `2t = 8`, so `t = 4`.']],
+        hints: ['Solve `8 − 2t = 0`.'] },
+      { lead: 'Find the velocity at `t = 5`.', ask: 'v(5) =', num: true, ans: '-2', units: 'm/s', unitAlts: ['meters per second'],
+        wrongs: [['2', '`8 − 2 · 5 = 8 − 10 = −2`.'],
+          ['30', 'That is `s(5)`, the position. Put 5 into `v(t) = 8 − 2t`.']],
+        hints: ['`8 − 2 · 5`.'] },
+      { lead: 'Which way is the object moving at `t = 5`?', ok: 0, pick: [
+        ['In the negative direction, at 2 meters per second, because `v(5)` is negative', 'The sign of the velocity gives the direction, and its size gives the speed.'],
+        ['In the positive direction, because `s(5) = 30` is positive', 'The sign of the position says where the object is, not which way it is moving. The direction comes from the sign of `v(5)`.'],
+        ['It is not moving', 'It stopped at `t = 4`. At `t = 5`, `v(5) = −2`, which is not 0.']] }],
+    graph: { x: [0, 9], y: [10, 35], ticks: { x: 1, y: 5 }, labels: { x: 't' }, fns: [{ f: function (t) { return 15 + 8 * t - t * t; }, domain: [0, 9] }],
+      tangent: { f: 0, at: 5, slope: -2, half: 1.2 }, hlines: [{ y: 31, role: 'muted' }], dots: [{ x: 4, y: 31, label: '(4, 31)', at: 'n' }, { x: 5, y: 30, label: '(5, 30)', at: 'ne' }],
+      aria: 'The graph of s, a parabola opening down with its top at (4, 31), where a dashed horizontal line touches it, and a tangent line of slope −2 at (5, 30).' },
+    after: 'The graph of `s` peaks at `t = 4`, where the object stops and turns around. At `t = 5` the tangent line has slope `−2`.' },
+
+  /* 15. (twin 4.7) the meaning of a derivative with units, and an estimate from it */
+  { id: 'm7', sec: 'sec-more', task: '`T(m)` is the temperature, in degrees Celsius, `m` kilometers along a mountain road. You know `T(3) = 12` and `T′(3) = −0.6`.', v: 'm', teach: T_RATE,
+    steps: [
+      { lead: 'Which sentence states what `T′(3) = −0.6` means?', ok: 0, pick: [
+        ['At 3 kilometers along the road, the temperature is falling at 0.6 degrees Celsius per kilometer', 'A derivative is a rate: output units per unit of input, at one point.'],
+        ['At 3 kilometers along the road, the temperature is `−0.6` degrees Celsius', 'That would be `T(3)`, and `T(3) = 12`. `T′(3)` is a rate, not a temperature.'],
+        ['Over the first 3 kilometers, the temperature fell 0.6 degrees Celsius', 'A derivative is the rate at one point, not the total change over a stretch of road.'],
+        ['The temperature falls 0.6 degrees Celsius per hour', 'The input is kilometers along the road, not time. The units are degrees Celsius per kilometer.']] },
+      { lead: 'From 3 to 3.5 kilometers is 0.5 kilometer. Estimate the change in temperature: the rate times the distance.', ask: 'ΔT ≈ T′(3) · 0.5 =', num: true, ans: '-0.3', tol: 0.0005, units: '°C',
+        wrongs: [['0.3', 'The rate is negative, so the temperature drops: `−0.6 · 0.5 = −0.3`.'],
+          ['-1.2', 'Multiply the rate by the 0.5 kilometer; do not divide by it.']],
+        hints: ['`−0.6 · 0.5`.'] },
+      { lead: 'Estimate the temperature at 3.5 kilometers.', ask: 'T(3.5) ≈', num: true, ans: '11.7', tol: 0.0005, units: '°C',
+        wrongs: [['12.3', 'The temperature is falling, so add the negative change: `12 + (−0.3)`.'],
+          ['-0.3', 'That is the change. Add it to `T(3) = 12`.'],
+          ['11.4', 'That uses a whole kilometer. From 3 to 3.5 is 0.5 kilometer: `12 + (−0.6)(0.5)`.']],
+        hints: ['Start at `T(3) = 12` and add the change you just found.'] }] },
+
+  /* 16. (Paul, Interpretation of the Derivative, Problems 1 and 2) slopes read from the graph of a curve */
+  { id: 'm8', sec: 'sec-more', task: 'The graph of `f` is shown with two dashed tangent lines: one at `x = −1` and one at `x = 3`. Use the graph to estimate values of `f′`.', teach: T_TAN,
+    fig: { x: [-2.5, 5.5], y: [-1, 5], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return 4 - (x - 1) * (x - 1) / 2; } }],
+      tangent: { f: 0, at: -1, slope: 2, half: 1.3, dash: true }, segs: [{ from: [2, 4], to: [4.4, -0.8], role: 'rate', dash: true }],
+      dots: [{ x: -1, y: 2, label: '(−1, 2)', at: 'nw' }, { x: 0, y: 4, label: '(0, 4)', at: 'nw' }, { x: 3, y: 2, label: '(3, 2)', at: 'ne' }, { x: 4, y: 0, label: '(4, 0)', at: 'ne' }],
+      aria: 'The graph of f, a parabola opening down with its highest point at (1, 4). A dashed tangent line touches it at (−1, 2) and passes through (0, 4). Another dashed tangent line touches it at (3, 2) and passes through (4, 0).' },
+    steps: [
+      { lead: 'The tangent line at `x = −1` passes through `(−1, 2)` and `(0, 4)`. Estimate `f′(−1)`, its slope.', ask: 'f′(−1) ≈', num: true, ans: '2',
+        wrongs: [['-2', 'The line rises from left to right, so its slope is positive.'],
+          ['0.5', 'Slope is rise over run: the line rises 2 while it runs 1, so `F{2}{1}`.']],
+        hints: ['From `(−1, 2)` to `(0, 4)`, the rise is 2 and the run is 1.'] },
+      { lead: 'The graph has its highest point at `x = 1`. What is `f′(1)`?', ask: 'f′(1) =', num: true, ans: '0',
+        wrongs: [['4', '4 is `f(1)`, the height. At the top of a smooth turn the tangent line is horizontal.']],
+        hints: ['What is the slope of a horizontal line?'] },
+      { again: true, lead: 'The tangent line at `x = 3` passes through `(3, 2)` and `(4, 0)`. Estimate `f′(3)`.', ask: 'f′(3) ≈', num: true, ans: '-2',
+        wrongs: [['2', 'The line falls from left to right, so its slope is negative.'],
+          ['-0.5', 'Slope is rise over run: the line falls 2 while it runs 1, so `F{−2}{1}`.']],
+        hints: ['From `(3, 2)` to `(4, 0)`, the rise is `−2` and the run is 1.'] },
+      { lead: 'No tangent line is drawn at `x = 0`, where the curve passes through `(0, 3.5)`. Lay a straight edge along the curve there, so it touches without cutting across, and estimate its slope.', ask: 'f′(0) ≈', num: true, ans: '1', tol: 0.5,
+        wrongs: [['3.5', 'That is `f(0)`, the height. The question asks for the slope of the tangent line there.'],
+          ['-1', 'At `x = 0` the graph is still rising toward its top, so the slope is positive.']],
+        hints: ['At `x = 0` the curve is rising, but less steeply than at `x = −1`, where the slope is 2.'], okNote: 'For this curve the exact value is `f′(0) = 1`. An estimate from a graph only needs to be close.' }] },
+
+  /* 17. (Paul, Interpretation of the Derivative, Problem 3) what values of f and f′ say about a graph */
+  { id: 'm9', sec: 'sec-more', task: 'A function `f` has no breaks or corners, and `f(1) = 3`, `f′(1) = 1`, `f(4) = 5` and `f′(4) = −2`. Decide what its graph must look like.', teach: T_TAN,
+    steps: [
+      { lead: 'Which two points must be on the graph of `f`?', ok: 0, pick: [
+        ['`(1, 3)` and `(4, 5)`', 'A point on the graph pairs an input `x` with its height `f(x)`.'],
+        ['`(1, 1)` and `(4, −2)`', 'Those pair each `x` with `f′`, the slope there. A point on the graph pairs `x` with `f(x)`.'],
+        ['`(3, 1)` and `(5, 4)`', 'A point is written `(x, f(x))`, with the input first.']] },
+      { lead: 'What does `f′(1) = 1` say about the graph at `x = 1`?', ok: 0, pick: [
+        ['It is rising there, with slope 1', 'A positive derivative means the graph rises at that point.'],
+        ['Its height there is 1', 'The height is `f(1) = 3`. `f′(1)` is the slope.'],
+        ['It is flat there', 'Flat means a slope of 0. Here the slope is 1.']] },
+      { lead: 'How does the graph look at `x = 4`, compared with `x = 1`?', ok: 0, pick: [
+        ['It is falling, and twice as steep as at `x = 1`', 'The slope `−2` is negative, and its size, 2, is twice the size of the slope at `x = 1`.'],
+        ['It is falling, but less steeply than at `x = 1`', 'Compare sizes: `|−2| = 2`, which is more than `|1| = 1`.'],
+        ['It is rising, because `f(4) = 5` is more than `f(1) = 3`', 'Comparing heights tells you the graph is higher at 4, not what it is doing there. The slope at 4 is negative, so there it falls.']] },
+      { lead: 'The graph rises at `x = 1` and falls at `x = 4`. What must happen between them?', ok: 0, pick: [
+        ['It turns around: somewhere between 1 and 4 it has a high point with a horizontal tangent line', 'To go from rising to falling without a corner, the slope must pass through 0, at the top of a turn.'],
+        ['Nothing: it can rise straight from `(1, 3)` to `(4, 5)`', 'A graph that only rises would have a positive slope at `x = 4`, but `f′(4) = −2`.'],
+        ['It must have a low point between 1 and 4', 'Going from rising to falling makes a high point. A low point comes from falling, then rising.']] }],
+    graph: { x: [0, 5], y: [0, 7], ticks: { x: 1, y: 1 }, fns: [{ f: m9F, domain: [0.2, 5] }],
+      segs: [{ from: [0.4, 2.4], to: [1.6, 3.6], role: 'rate' }, { from: [3.6, 5.8], to: [4.4, 4.2], role: 'rate' }],
+      dots: [{ x: 1, y: 3, label: '(1, 3)', at: 'se' }, { x: 4, y: 5, label: '(4, 5)', at: 'ne' }],
+      aria: 'One graph that fits: a smooth curve rising through (1, 3) with a short tangent segment of slope 1, peaking near x = 3.3, then falling through (4, 5) with a short tangent segment of slope −2.' },
+    after: 'One graph that fits. It rises through `(1, 3)` with slope 1, turns around between 1 and 4, and falls through `(4, 5)` with slope `−2`. Many other graphs fit too.' }
 ];
 /* ================================ builder (keep unchanged when copying) ================================ */
 /* PARENTHESIS SLIPS. Typing x+3/x+4 for (x + 3)/(x + 4) is the commonest typing slip, and the engine's "Reads as" line
@@ -3265,14 +3529,14 @@ function sectionHTML(s, n) {
   return sec(s.id, String(n + 1), s.title, s.lede) + col(ps.map(function (p) { return blk(p.id, function () { return problemHTML(p); }); }).join(''));
 }
 function backHTML() {
-  return sec('sec-back', '', 'Back to Paul', '') + prose('', [
-    'If one type of problem gave you trouble, rework Paul’s practice problems for it: [Continuity](' + PAUL_P + 'Continuity.aspx), [The Definition of the Derivative](' + PAUL_P + 'DefnOfDerivative.aspx) or [Interpretation of the Derivative](' + PAUL_P + 'DerivativeInterp.aspx).',
-    'Next, complete Problem Set 3, Parts 1 and 2. Unit 5 continues in Paul’s notes with [Differentiation Formulas](' + PAUL_C + 'DiffFormulas.aspx).']);
+  return sec('sec-back', '', 'What Comes Next', '') + prose('', [
+    'If one kind of problem gave you trouble, find the example of that kind in Unit 4 Worked Examples, cover its solution, and work it by hand.',
+    'Next, complete the Unit 4 Problem Set.']);
 }
 function page() {
-  return header('Unit 4 Practice', SECTIONS_P.map(function (s) { return ['#' + s.id, s.nav]; }).concat([['#sec-back', 'Back to Paul']])) +
-    '<main id="top">' + hero({ kicker: 'Calculus I · Unit 4', title: 'Unit 4 Practice: Continuity and the Derivative',
-      dek: 'Use this page after the Unit 4 reading and Paul’s practice problems. For each problem, choose the method, then type each line of the work. Each line is checked before the next one opens. Type a power with ⟦^⟧, as in ⟦x^2⟧ or ⟦x^(1/2)⟧, and put a whole top or bottom in parentheses, as in ⟦(x + 1)/(x − 2)⟧.' }) +
+  return header('Unit 4 Practice', SECTIONS_P.map(function (s) { return ['#' + s.id, s.nav]; }).concat([['#sec-back', 'Next']])) +
+    '<main id="top">' + hero({ kicker: 'Calculus I · Unit 4: Continuity and the Derivative', title: 'Unit 4 Practice',
+      dek: 'Use this page after you read Unit 4: Continuity and the Derivative and Unit 4 Worked Examples. For each problem, choose the method, then type each line of the work. Each line is checked before the next one opens. Problems 9 to 17, under More Practice, are optional. Type a power with ⟦^⟧, as in ⟦x^2⟧ or ⟦x^(1/2)⟧, and put a whole top or bottom in parentheses, as in ⟦(x + 1)/(x − 2)⟧.' }) +
     SECTIONS_P.map(sectionHTML).join('') + backHTML() + '</main>';
 }
 expose({ PROBLEMS: PROBLEMS, problemHTML: problemHTML, formProblem: formProblem, stepDone: stepDone, powSlip: powSlip });
